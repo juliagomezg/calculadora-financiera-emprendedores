@@ -158,7 +158,7 @@ const BreakEvenCalculator = () => {
 
       {showTutorial && <TutorialExample />}
       
-      <div className="calculator-grid">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
         <div className="calculator-form order-1">
           <div className="bg-blue-50 p-6 sm:p-8 rounded-lg border-2 border-blue-100">
             <div className="flex items-center gap-2 mb-6">
@@ -261,24 +261,24 @@ const BreakEvenCalculator = () => {
               </div>
             ) : (
               <>
-                <div className="h-60 sm:h-80">
+                <div className="h-60 sm:h-80 mb-4 sm:mb-6">
                   <Chart 
                     data={generateChartData()} 
                     breakEvenPoint={breakEvenPoint}
                   />
                 </div>
                 
-                <div className="mt-6 sm:mt-8 p-4 sm:p-6 bg-blue-50 rounded-lg border border-blue-200">
-                  <h4 className="text-sm sm:text-base font-medium text-gray-700 mb-3 sm:mb-4">¿Qué significa esto? 🤔</h4>
-                  <div className="space-y-3">
-                    <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+                <div className="mt-8 sm:mt-10 p-4 sm:p-6 bg-blue-50 rounded-lg border border-blue-200 clear-both">
+                  <h4 className="text-sm sm:text-base font-medium text-gray-700 mb-4 sm:mb-5">¿Qué significa esto? 🤔</h4>
+                  <div className="space-y-4 sm:space-y-5">
+                    <p className="text-sm sm:text-base text-gray-600 leading-relaxed break-words">
                       Cuando vendas {breakEvenPoint.toFixed(0)} productos al mes, tu negocio empezará 
                       a ganar dinero. ¡Es tu meta mensual! 🎯
                     </p>
-                    <div className="text-sm sm:text-base text-gray-600 space-y-1">
-                      <p>• La línea azul muestra el dinero que ganas vendiendo</p>
-                      <p>• La línea naranja muestra tus gastos totales</p>
-                      <p>• Donde se cruzan es tu punto de equilibrio</p>
+                    <div className="text-sm sm:text-base text-gray-600 space-y-2 sm:space-y-3">
+                      <p className="break-words">• La línea azul muestra el dinero que ganas vendiendo</p>
+                      <p className="break-words">• La línea naranja muestra tus gastos totales</p>
+                      <p className="break-words">• Donde se cruzan es tu punto de equilibrio</p>
                     </div>
                   </div>
                 </div>
