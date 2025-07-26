@@ -734,15 +734,39 @@
 
 /* Enhanced responsive utilities for specific components */
 .calculator-grid {
-  @apply grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-12 gap-6 sm:gap-8 lg:gap-10 xl:gap-12;
+  @apply grid grid-cols-1 gap-6 sm:gap-8;
+  
+  /* Mejorado para pantalla completa */
+  @media (min-width: 1024px) {
+    grid-template-columns: minmax(280px, 320px) 1fr;
+    gap: 2rem;
+  }
+  
+  @media (min-width: 1280px) {
+    grid-template-columns: minmax(300px, 340px) 1fr;
+    gap: 2.5rem;
+  }
+  
+  @media (min-width: 1536px) {
+    grid-template-columns: minmax(320px, 360px) 1fr;
+    gap: 3rem;
+  }
+  
+  /* Optimización para pantallas ultra anchas y fullscreen */
+  @media (min-width: 1920px) {
+    grid-template-columns: minmax(340px, 400px) 1fr;
+    gap: 3rem;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
 }
 
 .calculator-form {
-  @apply xl:col-span-5 space-y-6 sm:space-y-8;
+  @apply space-y-6 sm:space-y-8;
 }
 
 .calculator-results {
-  @apply xl:col-span-7 space-y-6 sm:space-y-8;
+  @apply space-y-6 sm:space-y-8;
 }
 
 .dashboard-grid {
@@ -785,14 +809,13 @@
   .dashboard-grid {
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 2rem;
-  }
-  
-  .calculator-grid {
-    grid-template-columns: 2fr 3fr;
-    gap: 3rem;
+    max-width: 1600px;
+    margin: 0 auto;
   }
   
   .metrics-grid {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    max-width: 1400px;
+    margin: 0 auto;
   }
 }
