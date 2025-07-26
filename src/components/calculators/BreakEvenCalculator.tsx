@@ -17,13 +17,20 @@ const BreakEvenCalculator = () => {
   // Simple local tracking (no external dependencies)
   
   useEffect(() => {
-    const margin = pricePerUnit - variableCostPerUnit;
+    // Validar que los valores sean seguros
+    const safeFixedCosts = Math.min(Math.max(fixedCosts || 0, 0), 10000000);
+    const safePricePerUnit = Math.min(Math.max(pricePerUnit || 0, 0), 1000000);
+    const safeVariableCostPerUnit = Math.min(Math.max(variableCostPerUnit || 0, 0), 1000000);
+    
+    const margin = safePricePerUnit - safeVariableCostPerUnit;
     setContributionMargin(margin);
-    const ratio = margin / pricePerUnit * 100;
-    setContributionMarginRatio(ratio);
-    if (margin > 0) {
-      const calculatedBreakEven = fixedCosts / margin;
-      setBreakEvenPoint(calculatedBreakEven);
+    
+    const ratio = safePricePerUnit > 0 ? (margin / safePricePerUnit * 100) : 0;
+    setContributionMarginRatio(isFinite(ratio) ? ratio : 0);
+    
+    if (margin > 0 && isFinite(margin)) {
+      const calculatedBreakEven = safeFixedCosts / margin;
+      setBreakEvenPoint(isFinite(calculatedBreakEven) ? Math.min(calculatedBreakEven, 1000000) : 0);
     } else {
       setBreakEvenPoint(0);
     }
@@ -33,16 +40,34 @@ const BreakEvenCalculator = () => {
 
   const generateChartData = () => {
     const data = [];
-    const maxUnits = breakEvenPoint * 2;
-    const step = maxUnits / 10;
+    
+    // Protección contra números muy grandes
+    const safeBreakEvenPoint = Math.min(breakEvenPoint, 100000);
+    const maxUnits = Math.min(safeBreakEvenPoint * 2, 200000);
+    const step = Math.max(maxUnits / 10, 1);
+    
+    // Validar que los cálculos sean seguros
+    if (!isFinite(maxUnits) || !isFinite(step) || maxUnits <= 0) {
+      return [
+        { units: 0, revenue: 0, totalCost: fixedCosts, profit: -fixedCosts },
+        { units: 100, revenue: 100 * pricePerUnit, totalCost: fixedCosts + (100 * variableCostPerUnit), profit: (100 * pricePerUnit) - (fixedCosts + (100 * variableCostPerUnit)) }
+      ];
+    }
     
     for (let i = 0; i <= maxUnits; i += step) {
       const revenue = i * pricePerUnit;
       const totalCost = fixedCosts + (i * variableCostPerUnit);
       const profit = revenue - totalCost;
-      data.push({ units: i, revenue, totalCost, profit });
+      
+      // Validar que los valores no sean infinitos
+      if (isFinite(revenue) && isFinite(totalCost) && isFinite(profit)) {
+        data.push({ units: i, revenue, totalCost, profit });
+      }
     }
-    return data;
+    
+    return data.length > 0 ? data : [
+      { units: 0, revenue: 0, totalCost: fixedCosts, profit: -fixedCosts }
+    ];
   };
 
   const getProgressData = () => {
@@ -171,10 +196,11 @@ const BreakEvenCalculator = () => {
                 <InputField
                   label="¿Cuánto gastas en total cada mes?"
                   value={fixedCosts}
-                  onChange={(e) => setFixedCosts(Number(e.target.value))}
+                  onChange={(e) => setFixedCosts(Math.min(Number(e.target.value), 10000000))}
                   prefix="$"
                   type="number"
                   min={0}
+                  max={10000000}
                 />
                 <p className="text-xs text-gray-500 mt-1">
                   Suma todo: renta, luz, agua, internet, sueldos, etc.
@@ -185,10 +211,11 @@ const BreakEvenCalculator = () => {
                 <InputField
                   label="¿A qué precio vendes cada producto?"
                   value={pricePerUnit}
-                  onChange={(e) => setPricePerUnit(Number(e.target.value))}
+                  onChange={(e) => setPricePerUnit(Math.min(Number(e.target.value), 1000000))}
                   prefix="$"
                   type="number"
                   min={0}
+                  max={1000000}
                 />
                 <p className="text-xs text-gray-500 mt-1">
                   El precio que tus clientes pagan
@@ -199,10 +226,11 @@ const BreakEvenCalculator = () => {
                 <InputField
                   label="¿Cuánto te cuesta cada producto?"
                   value={variableCostPerUnit}
-                  onChange={(e) => setVariableCostPerUnit(Number(e.target.value))}
+                  onChange={(e) => setVariableCostPerUnit(Math.min(Number(e.target.value), 1000000))}
                   prefix="$"
                   type="number"
                   min={0}
+                  max={1000000}
                 />
                 <p className="text-xs text-gray-500 mt-1">
                   Lo que pagas por cada producto antes de venderlo
